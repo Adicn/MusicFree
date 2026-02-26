@@ -29,6 +29,7 @@ import ReactNativeTrackPlayer, {
     usePlaybackState,
     useProgress,
 } from "react-native-track-player";
+import RNFS from "react-native-fs";
 import LocalMusicSheet from "../localMusicSheet";
 
 import { TrackPlayerEvents } from "@/core.defination/trackPlayer";
@@ -38,7 +39,7 @@ import { ITrackPlayer } from "@/types/core/trackPlayer/index";
 import minDistance from "@/utils/minDistance";
 import { IPluginManager } from "@/types/core/pluginManager";
 import { ImgAsset } from "@/constants/assetsConst";
-import { resolveImportedAssetOrPath } from "@/utils/fileUtils";
+import { resolveImportedAssetOrPath, createEmptyAudio } from "@/utils/fileUtils";
 
 
 
@@ -76,11 +77,13 @@ class TrackPlayer extends EventEmitter<{
         [MusicRepeatMode.SINGLE]: MusicRepeatMode.QUEUE,
         [MusicRepeatMode.QUEUE]: MusicRepeatMode.SHUFFLE,
     };
-    private static fakeAudioUrl = "musicfree://fake-audio";
-    private static proposedAudioUrl = "musicfree://proposed-audio";
+    private static emptyAudioPath = `${RNFS.DocumentDirectoryPath}/empty.mp3`;
+    private static fakeAudioUrl = `file://${TrackPlayer.emptyAudioPath}`;
+    private static proposedAudioUrl = `file://${TrackPlayer.emptyAudioPath}`;
 
     constructor() {
         super();
+        createEmptyAudio(TrackPlayer.emptyAudioPath);
     }
 
     public get previousMusic() {
